@@ -1,15 +1,16 @@
 <template>
    <login></login>
-   <div class="toasts">
-    <the-toast 
+   
+   <!-- <div class="toasts"> -->
+    <TransitionGroup name="slide-left" tag="div" class="toasts">
+      <the-toast 
       v-for="(toast, i) in toasts" 
       :key="i"
       :toastType="toast.type"
       :message="toast.message"
-      >
-   </the-toast>
-
-   </div>
+      ></the-toast>
+    </TransitionGroup>   
+   <!-- </div> -->
 </template>
 
 <script>
@@ -18,25 +19,50 @@ import TheToast from "./components/TheToast.vue"
 export default {
   data: () =>({
     toasts:[
-      {
-        type: "Success",
-        message: "Done Successfully!"
-      },
-      {
-        type: "Error",
-        message: "Something went wrong!"
-      },
+      // {
+      //   type: "Success",
+      //   message: "Done Successfully!"
+      // },
+      // {
+      //   type: "Error",
+      //   message: "Something went wrong!"
+      // },
   ]
 
   }),
   components:{
     Login,
     TheToast
+  },
+  mounted(){
+    this.$eventBus.on('toast', (data) =>{
+      //console.log(data); //catch type, message from mitt 
+      this.toasts.push(data);
+      this.removeOneToast();
+
+    });
+     
+  },
+  methods:{
+    removeOneToast(){
+      setTimeout(() => {
+        this.toasts.shift();
+      },2222);
+    }
   }
 
 }
 </script>
 
 <style>
+.slide-left-enter-active,
+.slide-left-leave-active {
+  transition: all 0.25s ease;
+}
+.slide-left-enter-from,
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(100px);
+}
 
 </style>
