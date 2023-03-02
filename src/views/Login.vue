@@ -94,6 +94,8 @@ import TheButton from "../components/TheButton.vue"
               message: res.data.message
 
             });
+            localStorage.setItem("accessToken", res.data.accessToken);
+            this.$route.push("dashboard");
           })
           .catch((err) =>{
             let errorMessage = "Something went wrong!";
