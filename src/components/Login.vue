@@ -1,33 +1,19 @@
 <template>
     <div class="login-page">
         <div class="login-card">
-            <!-- <div class="box" :class="{'box--right': movedToRight}"></div>
-            <button @click="movedToRight=false">Move Left</button>
-            <button class="ml-4" @click="movedToRight= true">Move Right</button>
-            <hr class="mt-4"> -->
-
-            <!-- <Transition name="showhide">
-
-             <div class="box1 mt-4" v-if="showing"></div>
-            
-            </Transition>
-
-            <button @click="showing= !showing">Show / Hide</button> -->
-
-
             <div class="text-center">
                 <img src="../img/lock.png" class="login-card__icon" alt="">
                 <h2>User Login</h2>
             </div>
             <form action="#" @submit.prevent="handleSubmit">
 
-                <label class="block" for="">Email</label>
+                <label class="block" for="">username</label>
                 <input 
-                type="email" 
-                placeholder="Enter your email" 
-                v-model="FormData.email"
+                type="text" 
+                placeholder="Enter your username" 
+                v-model="FormData.username"
                 required
-                ref="email"
+                ref="username"
                 > 
 
                 <label class="block mt-3" for="">Password</label>
@@ -38,10 +24,12 @@
                 required
                 ref="password"
                 >
+                <!-- <p class="text-center mt-3" v-if="loggingIn">Logging in...</p> -->
+                <!-- <button type="submit" class="w-100 mt-3" v-else>Login</button> -->
+                <the-button class="mt-3" :block="true" :loading="loggingIn">Login</the-button>
 
-                <button type="submit" class="w-100 mt-3">Login</button>
 
-                <div class="d-flex jc-between">
+                <div class="d-flex mt-2 jc-between">
                     <div>
                         <label for="">
                             <input type="checkbox">
@@ -58,52 +46,77 @@
 </template>
 
 <script>
-export default {
+import axios from 'axios';
+import TheButton from "../components/TheButton.vue"
+  export default {
     data:()=>({
         FormData:{
-            email: "",
-            password: ""
+          username: "",
+          password: ""
         },
+        loggingIn: false,
         movedToRight: false,
         showing: false
-
-    }),
-    methods:{
+      }),
+      methods:{
         handleSubmit(){
-            console.log(this.FormData)
-            if(!this.FormData.email){
-                // alert("Email can not be empty!")
-                //TODO: show error message on toast
-                this.$eventBus.emit('toast', {
-                    type: "Error",
-                    message: "Email can not be empty!"
+          console.log(this.FormData)
+          if(!this.FormData.username){
+            // alert("username can not be empty!")
+            //TODO: show error message on toast
+            this.$eventBus.emit('toast', {
+              type: "Error",
+              message: "username can not be empty!"
 
-                });
-                this.$refs.email.focus();
+            });
+            this.$refs.username.focus();
+            return;
+          }
+          if(this.FormData.password.length<6){
+            // alert("Password must be at least 6 characters long!")
+            //TODO: show error message on toast
 
-                return;
+            this.$eventBus.emit('toast', {
+              type:"Error",
+              message: "Password must be at least 6 characters long!"
+
+            });
+            this.$refs.password.focus();
+
+            return;
+          }
+          //TODO: Call API
+          this.loggingIn= true;
+          axios.post('https://api.rimoned.com/api/pharmacy-management/v1/login', this.FormData).then((res) =>{
+            console.log(res.data);
+            this.$eventBus.emit('toast', {
+              type: "Success",
+              message: res.data.message
+
+            });
+          })
+          .catch((err) =>{
+            let errorMessage = "Something went wrong!";
+            if(err.response){
+              errorMessage = err.response.data.message;
+
             }
-            if(this.FormData.password.length<6){
-                // alert("Password must be at least 6 characters long!")
-                //TODO: show error message on toast
+            this.$eventBus.emit('toast', {
+              type: "Error",
+              message: errorMessage
 
-                this.$eventBus.emit('toast', {
-                    type:"Error",
-                    message: "Password must be at least 6 characters long!"
+            });
 
-                });
-                this.$refs.password.focus();
-
-                return;
-            }
-
+          })
+          .finally(()=>{
+            this.loggingIn=false;
+          });   
         }
-    },
-    components:{
-    }
-
-
-}
+      },
+      components:{
+        TheButton
+      }
+  }
 </script>
 
 <style>
@@ -177,7 +190,7 @@ export default {
   padding: 44px 33px;
 }
 
-.login-card input[type="email"],
+.login-card input[type="text"],
 .login-card input[type="password"] {
   width: 100%;
 }
@@ -185,8 +198,5 @@ export default {
 .login-card__icon {
   max-width: 77px;
 }
-
-
-
 
 </style>
