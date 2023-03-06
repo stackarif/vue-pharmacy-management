@@ -1,9 +1,16 @@
- <template>
-    <div class="the-heade">
-        
+<template>
+    <div class="the-header">
+      <div>
+        <input type="text" class="the-header__search" placeholder="Search...">
+      </div>
+      <div class="avatar-wrapper">
+        <div class="avatar">
+          T
+        </div>
+      </div>  
     </div>
    
- </template>
+</template>
  
  <script>
  export default {

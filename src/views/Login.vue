@@ -2,12 +2,12 @@
     <div class="login-page">
         <div class="login-card">
             <div class="text-center">
-                <img src="../img/lock.png" class="login-card__icon" alt="">
+                <img src="../../src/img/lock.png" class="login-card__icon" alt="">
                 <h2>User Login</h2>
             </div>
             <form action="#" @submit.prevent="handleSubmit">
 
-                <label class="block" for="">username</label>
+                <label class="block" for="">Username</label>
                 <input 
                 type="text" 
                 placeholder="Enter your username" 
@@ -47,7 +47,11 @@
 
 <script>
 import axios from 'axios';
-import TheButton from "../components/TheButton.vue"
+import {eventBus} from "../utils/eventBus";
+import {setPrivateHeaders} from "../service/axiosInstance";
+import {showErrorMessage, showSuccessMessage} from "../utils/function";
+import TheButton from "../components/TheButton.vue";
+
   export default {
     data:()=>({
         FormData:{
@@ -63,24 +67,17 @@ import TheButton from "../components/TheButton.vue"
           console.log(this.FormData)
           if(!this.FormData.username){
             // alert("username can not be empty!")
+            
             //TODO: show error message on toast
-            this.$eventBus.emit('toast', {
-              type: "Error",
-              message: "username can not be empty!"
-
-            });
+           
+            showErrorMessage("Username can not be empty!");
             this.$refs.username.focus();
             return;
           }
           if(this.FormData.password.length<6){
-            // alert("Password must be at least 6 characters long!")
             //TODO: show error message on toast
 
-            this.$eventBus.emit('toast', {
-              type:"Error",
-              message: "Password must be at least 6 characters long!"
-
-            });
+            showErrorMessage("Password must be at least 6 characters long!");
             this.$refs.password.focus();
 
             return;
@@ -88,30 +85,18 @@ import TheButton from "../components/TheButton.vue"
           //TODO: Call API
           this.loggingIn= true;
           axios.post('https://api.rimoned.com/api/pharmacy-management/v1/login', this.FormData).then((res) =>{
-            console.log(res.data);
-            this.$eventBus.emit('toast', {
-              type: "Success",
-              message: res.data.message
+            showSuccessMessage(res);
 
-            });
             localStorage.setItem("accessToken", res.data.accessToken);
-            this.$route.push("dashboard");
+            setPrivateHeaders();
+            this.$router.push("/dashboard");
           })
           .catch((err) =>{
-            let errorMessage = "Something went wrong!";
-            if(err.response){
-              errorMessage = err.response.data.message;
-
-            }
-            this.$eventBus.emit('toast', {
-              type: "Error",
-              message: errorMessage
-
-            });
+            showErrorMessage(err);
 
           })
           .finally(()=>{
-            this.loggingIn=false;
+            this.loggingIn = false;
           });   
         }
       },

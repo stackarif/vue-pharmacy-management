@@ -1,20 +1,19 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import mitt from 'mitt'
+import { createApp } from 'vue';
 import router from './router';
+
+import App from './App.vue';
+
 
 
 // import "./assets/css/ayoflex.css"
 import 'ayoflex/dist/ayoflex.min.css';
-
 import "./assets/css/style.css";
 
-let eventBus = mitt()
 
 
-const app = createApp(App)
+const app = createApp(App);
 app.use(router);
-app.config.globalProperties.$eventBus = eventBus;
+// app.config.globalProperties.$eventBus = eventBus;
 
-app.mount('#app')
+app.mount('#app');
   

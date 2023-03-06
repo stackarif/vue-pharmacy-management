@@ -1,6 +1,5 @@
 <template>
   <router-view></router-view>   
-   <!-- <div class="toasts"> -->
     <TransitionGroup name="slide-left" tag="div" class="toasts">
       <the-toast 
       v-for="(toast, i) in toasts" 
@@ -9,30 +8,23 @@
       :message="toast.message"
       ></the-toast>
     </TransitionGroup>   
-   <!-- </div> -->
 </template>
 
 <script>
-import TheToast from "./components/TheToast.vue"
+import axios from "axios";
+import TheToast from "./components/TheToast.vue";
+import {eventBus} from "./utils/eventBus";
+
 export default {
   data: () =>({
-    toasts:[
-      // {
-      //   type: "Success",
-      //   message: "Done Successfully!"
-      // },
-      // {
-      //   type: "Error",
-      //   message: "Something went wrong!"
-      // },
-  ]
+    toasts:[]
 
   }),
   components:{
     TheToast
   },
   mounted(){
-    this.$eventBus.on('toast', (data) =>{
+    eventBus.on('toast', (data) =>{
       //console.log(data); //catch type, message from mitt 
       this.toasts.push(data);
       this.removeOneToast();
