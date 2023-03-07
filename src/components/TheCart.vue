@@ -11,7 +11,7 @@
         <th>Total</th>
         <th>
           <img
-            src="/img/trash.png"
+            src="../../public/img/trash.png"
             class="action-icon action-icon--delete-small"
             alt=""
           />
@@ -31,7 +31,7 @@
         </td>
         <td>
           <img
-            src="/img/trash.png"
+            src="../../public/img/trash.png"
             class="action-icon action-icon--delete-small"
             alt=""
             @click="removeFromCart(item._id)"
@@ -54,22 +54,22 @@
 </template>
 
 <script>
-// import { mapState, mapActions } from "pinia";
-// import { useCartStore } from "../store/cartStore";
+import { mapState, mapActions } from "pinia";
+import { useCartStore } from "../store/cartStrore";
 import TheButton from "./TheButton.vue";
 
 export default {
-  // methods: {
-  //   ...mapActions(useCartStore, {
-  //     removeFromCart: "remove"
-  //   })
-  // },
-  // computed: {
-  //   ...mapState(useCartStore, {
-  //     cartItems: "products",
-  //     totalPrice: "totalPrice"
-  //   })
-  // },
+  methods: {
+    ...mapActions(useCartStore, {
+      removeFromCart: "romove"
+    })
+  },
+  computed: {
+    ...mapState(useCartStore, {
+      cartItems: "products",
+      totalPrice: "totalPrice"
+    })
+  },
   components: {
     TheButton
   }

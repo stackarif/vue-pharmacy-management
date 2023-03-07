@@ -92,6 +92,8 @@
 </template>
  
  <script>
+ import {mapActions} from "pinia";
+ import {useCartStore} from "../store/cartStrore"
  import TheModal from './TheModal.vue';
  import TheButton from './TheButton.vue';
  import privateService from '../service/privateService';
@@ -113,6 +115,10 @@ import { showErrorMessage } from '../utils/function';
 
   },
   methods:{
+    ...mapActions(useCartStore,{
+      addToCartStore: "add",
+
+    }),
     logout(){
       localStorage.removeItem("accessToken");
       location.href = "/";
@@ -146,8 +152,12 @@ import { showErrorMessage } from '../utils/function';
 
       }else{
         console.log("Adding to cart."); 
+        this.addToCartStore({...this.selectedDrug, quantity: this.quantity });
+        this.detailsModal = false;
+        this.quantity = 1;
+        this.searchString = "";
       }
-      this.detailsModal = false;
+      // this.detailsModal = false;
       
     },
     handleBlur(){

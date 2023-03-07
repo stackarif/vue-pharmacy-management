@@ -1,7 +1,8 @@
 <template>
     <div class="login-page">
         <div class="login-card">
-            <div class="text-center">
+            <h2 >{{ projectName }}</h2>  
+            <div class="text-center">                            
                 <img src="../../src/img/lock.png" class="login-card__icon" alt="">
                 <h2>User Login</h2>
             </div>
@@ -47,9 +48,12 @@
 
 <script>
 import axios from 'axios';
+import {mapState, mapActions} from "pinia";
 import {eventBus} from "../utils/eventBus";
 import {setPrivateHeaders} from "../service/axiosInstance";
 import {showErrorMessage, showSuccessMessage} from "../utils/function";
+import {infoStore} from "../data/info";
+import {useAuthStore} from "../store/authStore";
 import TheButton from "../components/TheButton.vue";
 
   export default {
@@ -60,9 +64,28 @@ import TheButton from "../components/TheButton.vue";
         },
         loggingIn: false,
         movedToRight: false,
-        showing: false
+        showing: false,
+        projectName: infoStore.projectName,
       }),
+      components:{
+        TheButton
+      },
+      computed:{
+        ...mapState(useAuthStore, {
+          username: "username",
+          accessToken: "accessToken",
+          refreshToken: "refreshToken",
+          isLoggedIn: "isLoggedIn"
+
+        })
+
+      },
       methods:{
+        ...mapActions(useAuthStore, {
+          login: "login"
+
+        }),
+        
         handleSubmit(){
           console.log(this.FormData)
           if(!this.FormData.username){
@@ -84,8 +107,11 @@ import TheButton from "../components/TheButton.vue";
           }
           //TODO: Call API
           this.loggingIn= true;
-          axios.post('https://api.rimoned.com/api/pharmacy-management/v1/login', this.FormData).then((res) =>{
+          axios.post('https://api.rimoned.com/api/pharmacy-management/v1/login', 
+          this.FormData)
+          .then((res) =>{
             showSuccessMessage(res);
+            this.login(res.data)
 
             localStorage.setItem("accessToken", res.data.accessToken);
             setPrivateHeaders();
@@ -100,9 +126,7 @@ import TheButton from "../components/TheButton.vue";
           });   
         }
       },
-      components:{
-        TheButton
-      }
+   
   }
 </script>
 

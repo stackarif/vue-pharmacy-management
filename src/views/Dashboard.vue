@@ -36,7 +36,7 @@ import TheCart from "../components/TheCart.vue";
 import { setPrivateHeaders } from "../service/axiosInstance";
 export default {
   data: () => ({
-      cartOpened: false
+      cartOpened: true,
       
 
   }),
